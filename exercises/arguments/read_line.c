@@ -11,9 +11,12 @@ int main(void)
 	char string[256];
 	char *ptr = string;
 
-	printf("$ ");
-	scanf("%s", ptr);
+	while (1)
+	{
+		printf("$ ");
+		scanf("%s", ptr);
 
-	printf("%s\n", ptr);
+		printf("%s\n", ptr);
+	}
 	return (0);
 }
