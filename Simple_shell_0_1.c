@@ -16,7 +16,7 @@ int main()
 
 	while (1)
 	{
-		printf("$ ");
+		printf("#cisfun$ ");
 		getline(&buffer, &len, stdin);
 		printf("%s", buffer);
 	}
