@@ -1,11 +1,11 @@
-#include "builtins.h"
+#include "main.h"
 
 /**
  *  * __exec - replace the running shell with a new program
  *   * @info: arguments passed
  *    * Return: int
- *     */
-int __exec(info_t *info)
+*/
+int _exec(info_t *info)
 {
 	char *exe, **args = info->tokens + 1, **env = NULL;
 	if (!*args)
