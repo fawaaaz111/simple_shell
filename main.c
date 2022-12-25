@@ -1,35 +1,44 @@
-#include "main.h"
+#include "shell.h"
+
 /**
- *  * get_main - get the main
- *   * Return: pointer to a NULL-terminated statically-allocated array of main
-*/
-const main_t *get_main(void)
+ * main - entry point
+ * @ac: arg count
+ * @av: arg vector
+ *
+ * Return: 0 on success, 1 on error
+ */
+int main(int ac, char **av)
 {
-	static main_t main[] = {
-		{"alias", alias, ALIAS_HELP, ALIAS_DESC},
-		{"cd", cd, CD_HELP, CD_DESC},
-		{"env", env, ENV_HELP, ENV_DESC},
-		{"exec", exec, EXEC_HELP, EXEC_DESC},
-		{"exit", exit, EXIT_HELP, EXIT_DESC},
-		{"help", help, HELP_HELP, HELP_DESC},
-		{"setenv", setenv, SETENV_HELP, SETENV_DESC},
-		{"unsetenv", unsetenv, UNSETENV_HELP, UNSETENV_DESC},
-		{0}
-	};
-	return (main);
-}
-/**
- *  * get_main - get a main by name
- *   * @name: the name of the main to retrieve
- *    * Return: NULL if no match is found, otherwise a pointer to the main
-*/
-const main_t *get_main(const char *name)
-{
-	const main_t *main = NULL;
-	for (main = get_main(); main->name; main += 1)
+	info_t info[] = { INFO_INIT };
+	int fd = 2;
+
+	asm ("mov %1, %0\n\t"
+		"add $3, %0"
+		: "=r" (fd)
+		: "r" (fd));
+
+	if (ac == 2)
 	{
-		if (_strcmp(name, main->name) == 0)
-			return (main);
+		fd = open(av[1], O_RDONLY);
+		if (fd == -1)
+		{
+			if (errno == EACCES)
+				exit(126);
+			if (errno == ENOENT)
+			{
+				_eputs(av[0]);
+				_eputs(": 0: Can't open ");
+				_eputs(av[1]);
+				_eputchar('\n');
+				_eputchar(BUF_FLUSH);
+				exit(127);
+			}
+			return (EXIT_FAILURE);
+		}
+		info->readfd = fd;
 	}
-	return (NULL);
+	populate_env_list(info);
+	read_history(info);
+	hsh(info, av);
+	return (EXIT_SUCCESS);
 }
